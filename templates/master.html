@@ -28,7 +28,7 @@
 
     <script>
         function fetchWeatherData() {
-            fetch('/weather_data.json')
+            fetch('/static/weather_data.json')
                 .then(response => response.json())
                 .then(data => {
                     const forecastTableBody = document.getElementById('forecastTableBody');
