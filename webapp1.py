@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+def print_data(a):
+    print(a)
 @app.route('/receiveData', methods=['POST'])
 def receive_data():
     data = request.get_json()
-    print('Received data:', data)
+    print_data(data)
     print('monir')
     # Process the data here if needed
     return jsonify({"status": "success", "data": data})
