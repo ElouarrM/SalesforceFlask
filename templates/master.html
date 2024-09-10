@@ -1,0 +1,78 @@
+<!-- file: master.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast Display</title>
+    <style id="dynamicStyles"></style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Forecast</h1>
+        <input type="submit" value="Search Weather Data" onclick="searchData()">
+
+        <div class="current-weather">
+            <h2>Current Weather</h2>
+            <p><strong>Temperature:</strong> <span id="currentTemp">N/A</span>°C</p>
+            <p><strong>Wind Speed:</strong> <span id="currentWindSpeed">N/A</span> m/s</p>
+        </div>
+
+        <div class="hourly-forecast">
+            <h2>Hourly Forecast</h2>
+            <table class="forecast-table">
+                <thead>
+                    <tr>
+                        <th>Hour</th>
+                        <th>Temperature (°C)</th>
+                        <th>Relative Humidity (%)</th>
+                        <th>Wind Speed (m/s)</th>
+                    </tr>
+                </thead>
+                <tbody id="forecastTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <iframe src="http://localhost:5000/slave.html"
+            style="width: 100%; height: 600px; border: none;"></iframe>
+
+    <script>
+        function handleIncomingMessage(e) {
+            if (e.data && e.data.jsonData) {
+                const data = e.data.jsonData;
+
+                // Update current weather
+                document.getElementById('currentTemp').textContent = data.current.temperature_2m.toFixed(1);
+                document.getElementById('currentWindSpeed').textContent = (data.current.wind_speed_10m / 3.6).toFixed(1);
+
+                // Update hourly forecast
+                const forecastTableBody = document.getElementById('forecastTableBody');
+                forecastTableBody.innerHTML = '';
+
+                data.hourly.time.forEach((time, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${time}</td>
+                        <td>${data.hourly.temperature_2m[index].toFixed(1)}</td>
+                        <td>${data.hourly.relative_humidity_2m[index]}</td>
+                        <td>${(data.hourly.wind_speed_10m[index] / 3.6).toFixed(1)}</td>
+                    `;
+                    forecastTableBody.appendChild(row);
+                });
+
+                if (e.data.styles) {
+                    document.getElementById('dynamicStyles').textContent = e.data.styles;
+                }
+            }
+        }
+
+        function searchData() {
+            window.open("http://localhost:5000/slave.html" , "popup", "width=600,height=800");
+        }
+
+        window.addEventListener('message', handleIncomingMessage, false);
+    </script>
+</body>
+</html>
