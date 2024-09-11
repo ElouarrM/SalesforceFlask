@@ -67,6 +67,14 @@ def display_weather_page():
                         const tableBody = document.getElementById('forecastTableBody');
                         tableBody.innerHTML = '';  // Clear the table
 
+                        // Update dynamic temperature and wind speed from the first item
+                        if (data.length > 0) {
+                            const firstEntry = data[0];
+                            document.getElementById('temperature').innerText = firstEntry.temperature;
+                            document.getElementById('windSpeed').innerText = firstEntry.windSpeed;
+                        }
+
+                        // Populate the table with weather data
                         data.forEach(entry => {
                             const row = document.createElement('tr');
                             row.innerHTML = `
@@ -93,8 +101,8 @@ def display_weather_page():
 
     <div class="weather-info">
         <h2>Current Weather</h2>
-        <p><strong>Temperature:</strong> 17.6°C</p>
-        <p><strong>Wind Speed:</strong> 3.8 m/s</p>
+        <p><strong>Temperature:</strong> <span id="temperature"></span>°C</p>
+        <p><strong>Wind Speed:</strong> <span id="windSpeed"></span> m/s</p>
     </div>
 
     <h2>Hourly Forecast</h2>
